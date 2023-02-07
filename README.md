@@ -1,3 +1,5 @@
+Based on this repo: https://github.com/schung039/contextual-repr-manifolds
+
 # Emergence of Separable Manifolds in Deep Language Representations
 
 Toolkit for measuring mean-field theoretic manifold analysis (MFTMA) of linguistic manifolds
