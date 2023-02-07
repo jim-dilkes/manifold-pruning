@@ -1,0 +1,5 @@
+.idea
+.manifolds_venv
+.venv
+.vscode
+tmp*
