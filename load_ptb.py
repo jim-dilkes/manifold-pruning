@@ -27,7 +27,7 @@ with open('dataset/ptb_pos.txt', 'w') as f:
 reformatted_treebank = [\
     " ".join([word for word, _ in sent])
     + "\t"
-    + " ".join([f"{word}^{tag}" for word, tag in sent])
+    + " ".join([f"{word.lower()}^{tag}" for word, tag in sent])
     for sent in treebank.tagged_sents()
 ]
 
