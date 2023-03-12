@@ -1,5 +1,11 @@
 Based on this repo: https://github.com/schung039/contextual-repr-manifolds
 
+**Example commands to execute on word + pos**:
+```
+python .\prepare_data.py --dataset_file dataset/ptb_word_pos.txt --tag_file dataset/relevant_word_pos.txt --sample dataset/sample_seed_word_pos.pkl
+python .\feature_extract.py --dataset_file dataset/ptb_word_pos.txt --tag_file dataset/relevant_word_pos.txt --sample dataset/sample_seed_word_pos.pkl --feature_dir features_word_pos
+```
+
 # Emergence of Separable Manifolds in Deep Language Representations
 
 Toolkit for measuring mean-field theoretic manifold analysis (MFTMA) of linguistic manifolds

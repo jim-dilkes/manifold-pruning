@@ -1,0 +1,18 @@
+02/17/2023 03:16:04 - INFO - __main__ - Namespace(model_name='bert-base-uncased', task_name='qqp', ckpt_dir='./bert-base-uncased', output_dir='outputs/bert-base-uncased/qqp/mac/0.5/seed_0', gpu=0, metric='mac', constraint=0.5, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
+02/17/2023 03:16:04 - INFO - __main__ - Seed number: 0
+02/17/2023 03:16:07 - WARNING - datasets.builder - Found cached dataset glue (/home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
+02/17/2023 03:16:32 - INFO - __main__ - Namespace(model_name='bert-base-uncased', task_name='qqp', ckpt_dir='./bert-base-uncased', output_dir='outputs/bert-base-uncased/qqp/mac/0.5/seed_0', gpu=0, metric='mac', constraint=0.5, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
+02/17/2023 03:16:32 - INFO - __main__ - Seed number: 0
+02/17/2023 03:16:35 - WARNING - datasets.builder - Found cached dataset glue (/home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
+02/17/2023 03:16:35 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-5745c3c79d4ba6ea.arrow
+02/17/2023 03:16:36 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-6627390e2c9a66a2.arrow
+02/17/2023 03:16:41 - INFO - __main__ - Pruned Model MAC: 50.00 %
+02/17/2023 03:17:12 - INFO - __main__ - Namespace(model_name='bert-base-uncased', task_name='qqp', ckpt_dir='./bert-base-uncased', output_dir='outputs/bert-base-uncased/qqp/mac/0.5/seed_0', gpu=0, metric='mac', constraint=0.5, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
+02/17/2023 03:17:12 - INFO - __main__ - Seed number: 0
+02/17/2023 03:17:15 - WARNING - datasets.builder - Found cached dataset glue (/home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
+02/17/2023 03:17:15 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-5745c3c79d4ba6ea.arrow
+02/17/2023 03:17:15 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-4f8fde17e72e43b2.arrow
+02/17/2023 03:17:26 - INFO - __main__ - Pruned Model MAC: 50.00 %
+02/17/2023 03:17:49 - INFO - __main__ - qqp Pruning time (s): 27.09671902656555
+02/17/2023 03:17:51 - WARNING - datasets.builder - Found cached dataset glue (/home/rafael/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
+02/17/2023 03:18:55 - INFO - __main__ - qqp Test accuracy: 0.3721
