@@ -9,18 +9,22 @@ parser = argparse.ArgumentParser(description='Prepare data for MFTMA analysis by
                                              'max_manifold_size number of samples.')
 
 # Input
-parser.add_argument('--dataset_file', type=str, default="dataset/ptb_pos.txt",
-                    help='Input file with the relevant dataset. Each line contains the '
-                         'space-separated words of the sentence,  the tabular character (\\t) and '
-                         'the space-separated respective tags.')
+parser.add_argument('--dataset_file', type=str, default="dataset/train_questions_final.pkl",
+                    help='Input pickle file with the relevant dataset. Each line contains the ambiguous word '
+                    'tag and question with form ||word_1, tag_1|,...,|word_k, tag_k|| '
+                    'and a boolean value for whether the question is adversarial or '
+                    'not. ')
 parser.add_argument('--tag_file', type=str,
-                    default="dataset/relevant_pos.txt",
-                    help='Input file with the list of tags to use for the MFTMA analysis/')
+                    default="dataset/all_pos.txt",
+                    help='Input file with all possible base POS tags. ')
 
 # Output
 parser.add_argument('--sample', type=str, default="dataset/sample_seed_0.pkl",
                     help='Output file containing the  line index, '
                          'word index and tag of the randomly sampled dataset.')
+parser.add_argument('--relevant_tags', type=str,
+                    default="dataset/relevant_pos_tags.txt",
+                    help='Output file to store relevant POS tags. ')
 
 # Parameters
 parser.add_argument('--max_manifold_size', type=int, default=50,
@@ -36,19 +40,42 @@ print(args)
 
 random.seed(args.seed)
 
-relevant_tags = set()
-with open(args.tag_file) as f:
-    for tag in f:
-        relevant_tags.add(tag.strip().lower())
+"""
+Open dataset file and get tags and words - save them to a dictionary
+Cycle through data file with rows |amb_word,amb_tag||word_1, tag_1|, ..., 
+|word_k, tag_k||, bool adversarial |. Retrieve relevant pos tags as
+data_tags and the ambiguous word tags as amb_tags. 
+Use the and operator on all possible relevant pos_tags from relevant_pos.txt
+and get a final list of pos_tags stored in train_question_final_pos.txt
+"""
+data = pkl.load(open(args.dataset_file, "rb"))
+data_tags = []
+amb_tags = []
+for line in data:
+    amb_tags.append(line[0].lower() + "^" + line[1].lower())
+    for tmp in line[2]:
+        if len(tmp) == 2: 
+            data_tags.append(tmp[-1].lower())
 
+with open(args.tag_file, "r", newline='\n') as f:
+    pos_tags = [tag.split('\n')[0].lower() for tag in f.readlines()]
+    pos_tags.extend(amb_tags)
+pos_tags = set(pos_tags)   
+data_tags = set(data_tags)
+
+relevant_tags = pos_tags & data_tags
+with open(args.relevant_tags, 'w+') as f:
+    s = '\n'.join(relevant_tags)
+    f.write(s)
+    
 # open dataset file and get tags and words - save them to a dictionary
 tag2location = defaultdict(list)
-with open(args.dataset_file) as f:
-    for line_idx, line in enumerate(f):
-        tags = line.strip().split('\t')[1].lower().split()
-        for word_idx, tag in enumerate(tags):
-            if tag in relevant_tags:
-                tag2location[tag].append((line_idx, word_idx))
+for line_idx, line in enumerate(data):
+    tags = [word_tag[-1] for word_tag in line[2] if (line[0].lower() != word_tag[0].lower()) and (len(word_tag) == 2)]
+    tags += [line[0].lower() + "^" + line[1].lower()]
+    for word_idx, tag in enumerate(tags):
+        if tag in relevant_tags:
+            tag2location[tag].append((line_idx, word_idx))
 
 word_count = 0
 line_word_tag_map = defaultdict(dict)
