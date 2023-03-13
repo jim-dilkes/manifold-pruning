@@ -11,12 +11,13 @@ parser = argparse.ArgumentParser(description='Extract linguistic features from T
 
 # Input
 parser.add_argument('--dataset_file', type=str, default="dataset/ptb_pos.txt",
-                    help='Input file with the relevant dataset. Each line contains the '
-                         'space-separated words of the sentence,  the tabular character (\t) and '
-                         'the space-separated respective tags.')
+                    help='Input pickle file with the relevant dataset. Each line contains the ambiguous word '
+                    'tag and question with form ||word_1, tag_1|,...,|word_k, tag_k|| '
+                    'and a boolean value for whether the question is adversarial or '
+                    'not.')
 parser.add_argument('--tag_file', type=str,
-                    default="dataset/relevant_pos.txt",
-                    help='Input file with the list of tags to use for the MFTMA analysis/')
+                    default="dataset/relevant_pos_tags.txt",
+                    help='Input file with all POS tags used for Manifold Analysis.')
 parser.add_argument('--sample', type=str,
                     default="dataset/sample_seed_0.pkl",
                     help='Input file containing the line index, '
@@ -62,44 +63,41 @@ model.eval()
 
 line_word_tag_map = pkl.load(open(args.sample, 'rb+'))
 
-with open(args.dataset_file, encoding='utf-8') as dfile:
-    for line_idx,line in enumerate(dfile):
-        if line_idx in line_word_tag_map:
-            words, tags = line.strip().split('\t')
-            word_list = list(words.split())
-            for word_idx in line_word_tag_map[line_idx]:
-                tag = line_word_tag_map[line_idx][word_idx].lower()
-                if args.mask:
-                    # replace the word_idx location with mask token
-                    word_list[word_idx] = tokenizer.mask_token
+dfile = pkl.load(open(args.dataset_file, "rb"))
+for line_idx,line in enumerate(dfile):
+    if line_idx in line_word_tag_map:
+        #skips empty strings for words and tags. line[2] is where sentences are stored.
+        word_list, tags = [word[0].lower() for word in line[2] if len(word) == 2], [word[1].lower() for word in line[2] if len(word) == 2]
 
-                if args.pretrained_model_name == 'openai-gpt':
-                    split_word_idx = []
+        for word_idx in line_word_tag_map[line_idx]:
+            tag = line_word_tag_map[line_idx][word_idx].lower()
+            if args.mask:
+                # replace the word_idx location with mask token
+                word_list[word_idx] = tokenizer.mask_token
+            if args.pretrained_model_name == 'openai-gpt':
+                split_word_idx = []
+            else:
+                split_word_idx = [-1]
+            # tokenization - assign the same id for all sub words of a same word
+            word_tokens = []
+            for split_id, split_word in enumerate(word_list):
+                tokens = tokenizer.tokenize(split_word)
+                word_tokens.extend(tokens)
+                split_word_idx.extend([split_id] * len(tokens))
+            if args.pretrained_model_name != 'openai-gpt':
+                split_word_idx.append(len(word_list))
+            input_ids = torch.Tensor([tokenizer.encode(word_tokens, add_special_tokens=True, is_split_into_words=True)]).long()
+            input_ids = input_ids.to(device)
+            with torch.no_grad():
+                model_output = model(input_ids)[-1]
+            for layer in range(1,config.num_hidden_layers+1):
+                layer_output = model_output[layer][0]
+                vector_idcs = np.argwhere(np.array(split_word_idx) == word_idx).reshape(-1)
+                token_vector = layer_output[vector_idcs].mean(0).cpu().reshape(-1,1).numpy()
+                if manifold_vectors[layer][tag] is None:
+                    manifold_vectors[layer][tag] = token_vector
                 else:
-                    split_word_idx = [-1]
-
-                # tokenization - assign the same id for all sub words of a same word
-                word_tokens = []
-                for split_id, split_word in enumerate(word_list):
-                    tokens = tokenizer.tokenize(split_word)
-                    word_tokens.extend(tokens)
-                    split_word_idx.extend([split_id] * len(tokens))
-
-                if args.pretrained_model_name != 'openai-gpt':
-                    split_word_idx.append(len(word_list))
-
-                input_ids = torch.Tensor([tokenizer.encode(word_tokens, add_special_tokens=True)]).long()
-                input_ids = input_ids.to(device)
-                with torch.no_grad():
-                    model_output = model(input_ids)[-1]
-                for layer in range(1,config.num_hidden_layers+1):
-                    layer_output = model_output[layer][0]
-                    vector_idcs = np.argwhere(np.array(split_word_idx) == word_idx).reshape(-1)
-                    token_vector = layer_output[vector_idcs].mean(0).cpu().reshape(-1,1).numpy()
-                    if manifold_vectors[layer][tag] is None:
-                        manifold_vectors[layer][tag] = token_vector
-                    else:
-                        manifold_vectors[layer][tag] = np.hstack((manifold_vectors[layer][tag],
+                    manifold_vectors[layer][tag] = np.hstack((manifold_vectors[layer][tag],
                                                                 token_vector))
 
 for layer in range(1,config.num_hidden_layers+1):
