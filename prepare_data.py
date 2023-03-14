@@ -71,7 +71,7 @@ with open(args.relevant_tags, 'w+') as f:
 # open dataset file and get tags and words - save them to a dictionary
 tag2location = defaultdict(list)
 for line_idx, line in enumerate(data):
-    tags = [word_tag[-1] for word_tag in line[2] if (line[0].lower() != word_tag[0].lower()) and (len(word_tag) == 2)]
+    tags = [word_tag[-1].lower() for word_tag in line[2] if (line[0].lower() != word_tag[0].lower()) and (len(word_tag) == 2)]
     tags += [line[0].lower() + "^" + line[1].lower()]
     for word_idx, tag in enumerate(tags):
         if tag in relevant_tags:
