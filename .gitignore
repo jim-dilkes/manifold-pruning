@@ -3,3 +3,6 @@
 .venv
 .vscode
 tmp*
+.models
+__pycache__
+.archive
