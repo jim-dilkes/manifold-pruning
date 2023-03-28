@@ -39,10 +39,7 @@ for id in experiment_ids:
             
             os.system(f'python mftma_analysis.py \
                     --feature_dir {feature_dir} \
-                    --mftma_analysis_dir {mftma_analysis_dir}\
-                    --n_t 10 \
-                    --n_reps 1 \
-                    --num_layers 2')
+                    --mftma_analysis_dir {mftma_analysis_dir}')
 
         else:
             feature_dir = os.path.join(parent_dir, FEATURES_BASE, f'train_{id}', args.pruning_metric, f'{perc}Pruned')
@@ -65,7 +62,4 @@ for id in experiment_ids:
                     --pruning_metric {args.pruning_metric} \
                     --pruned_percentage {perc} \
                     --feature_dir {feature_dir} \
-                    --mftma_analysis_dir {mftma_analysis_dir}\
-                    --n_t 10 \
-                    --n_reps 1 \
-                    --num_layers 2')
+                    --mftma_analysis_dir {mftma_analysis_dir}')
