@@ -1,0 +1,3 @@
+[submodule "models/bert-base-uncased-squad2"]
+	path = models/bert-base-uncased-squad2
+	url = https://huggingface.co/deepset/bert-base-uncased-squad2
