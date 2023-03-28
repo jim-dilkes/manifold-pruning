@@ -33,3 +33,8 @@
 03/27/2023 17:20:15 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
 03/27/2023 17:20:15 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
 03/27/2023 17:20:15 - INFO - __main__ - Collecting mask gradients...
+03/28/2023 18:37:16 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='models/bert-base-uncased-squad2', output_dir='models/masks/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, constraint_heads=None, constraint_neurons=None, mha_lut='models/luts/mha_lut.pt', ffn_lut='models/luts/ffn_lut.pt', num_samples=2048, seed=0)
+03/28/2023 18:37:16 - INFO - __main__ - Seed number: 0
+03/28/2023 18:37:18 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/28/2023 18:37:18 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-e1ec954d61e9439d.arrow
+03/28/2023 18:37:19 - INFO - __main__ - Collecting mask gradients...
