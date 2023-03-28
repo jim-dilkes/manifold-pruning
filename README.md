@@ -1,29 +1,22 @@
-Based on this repo: https://github.com/schung039/contextual-repr-manifolds
+# Pruning-Induced Effects on MFT Manifold Statistics in LLMs
 
-**Example commands to execute on word + pos**:
-```
-python .\prepare_data.py --dataset_file dataset/ptb_word_pos.txt --tag_file dataset/relevant_word_pos.txt --sample dataset/sample_seed_word_pos.pkl
-python .\feature_extract.py --dataset_file dataset/ptb_word_pos.txt --tag_file dataset/relevant_word_pos.txt --sample dataset/sample_seed_word_pos.pkl --feature_dir features_word_pos
-```
+## Installation
 
-# Emergence of Separable Manifolds in Deep Language Representations
-
-Toolkit for measuring mean-field theoretic manifold analysis (MFTMA) of linguistic manifolds
- implemented in Python
- for the results of the paper [Emergence of Separable Manifolds in Deep Language Representations](https://arxiv.org/pdf/2006.01095.pdf), ICML 2020.
-
-
-## Install
-
-First install required dependencies with
-```
-pip install -r requirements.txt
+First, install required dependencies with
+```bash
+❯ pip install -r requirements.txt
 ```
 
-Then install the package via
+Second, initialise the `git` submodules to fetch the relevant PyTorch model weights
+
+```bash
+❯ git submodule init
+❯ git -C models/bert-base-uncased-squad2 lfs install
+❯ git -C models/bert-base-uncased-squad2 config lfs.fetchexclude "*.safetensors"
+❯ git submodule update
 ```
-pip install -e .
-```
+Note that this ensures only the **PyTorch** model weights are downloaded to save disk space.
+
 ## Usage
 The following contains usage instructions for preparing the data, extracting the features, run
  MFTMA analysis and plot the results.
@@ -148,14 +141,6 @@ optional arguments:
                         Location to output MFTMA analysis directory.
 ```
 
-## Reference
-If you find this code useful for your research, please cite [our paper](https://arxiv.org/pdf/2006.01095.pdf):
-```
-@InProceedings{mamou2020emergence,
-  title={Emergence of Separable Manifolds in Deep Language Representations},
-  author={Mamou, Jonathan and Le, Hang and Del Rio, Miguel and Stephenson, Cory and Tang, Hanlin and Kim, Yoon and Chung, SueYeon},
-  booktitle={37th International Conference on Machine Learning, ICML 2020},
-  year={2020},
-  organization={International Machine Learning Society (IMLS)}
-}
-```
+
+# References
+Based on https://github.com/schung039/contextual-repr-manifolds
