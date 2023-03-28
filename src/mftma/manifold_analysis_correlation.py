@@ -9,11 +9,15 @@ Separability and Geometry of Object Manifolds in Deep Neural Networks
 import autograd.numpy as np
 from scipy.linalg import qr
 from functools import partial
+from multiprocessing import Pool
+from numba import njit
+from time import time
 
 from cvxopt import solvers, matrix
+import pymanopt
 from pymanopt.manifolds import Stiefel
 from pymanopt import Problem
-from pymanopt.solvers import ConjugateGradient
+from pymanopt.optimizers import ConjugateGradient
 
 # Configure cvxopt solvers
 solvers.options['show_progress'] = False
@@ -21,6 +25,8 @@ solvers.options['maxiters'] = 1000000
 solvers.options['abstol'] = 1e-12
 solvers.options['reltol'] = 1e-12
 solvers.options['feastol'] = 1e-12
+
+N_PROCESSES = 2
 
 def manifold_analysis_corr(XtotT, kappa, n_t, t_vecs=None, n_reps=10):
     '''
@@ -51,65 +57,62 @@ def manifold_analysis_corr(XtotT, kappa, n_t, t_vecs=None, n_reps=10):
     # Subtract the mean from each manifold
     Xtot0 = [XtotT[i] - X_origin for i in range(num_manifolds)]
     # Compute the mean for each manifold
-    centers = [np.mean(XtotT[i], axis=1) for i in range(num_manifolds)]
-    centers = np.stack(centers, axis=1) # Centers is of shape (N, m) for m manifolds
+    centers = np.mean(XtotT, axis=2).T # Centers is of shape (N, m) for m manifolds
     center_mean = np.mean(centers, axis=1, keepdims=True) # (N, 1) mean of all centers
 
     # Center correlation analysis
-    UU, SS, VV = np.linalg.svd(centers - center_mean)
+    SS= np.linalg.svd(centers - center_mean, compute_uv=False)
     # Compute the max K 
     total = np.cumsum(np.square(SS)/np.sum(np.square(SS)))
     maxK = np.argmax([t if t < 0.95 else 0 for t in total]) + 11
 
     # Compute the low rank structure
-    norm_coeff, norm_coeff_vec, Proj, V1_mat, res_coeff, res_coeff0 = fun_FA(centers, maxK, 20000, n_reps)
-    res_coeff_opt, KK = min(res_coeff), np.argmin(res_coeff) + 1
+    start_time = time()
+    Proj, V1_mat, res_coeff, res_coeff0 = fun_FA(centers, maxK, 20000, n_reps)
+    KK = np.argmin(res_coeff) + 1
+    print(f'-- parallel fun_FA took {time() - start_time:.3f} s')
 
     # Compute projection vector into the low rank structure
     V11 = np.matmul(Proj, V1_mat[KK - 1])
-    X_norms = []
-    XtotInput = []
-    for i in range(num_manifolds):
-        Xr = Xtot0[i]
-        # Project manifold data into null space of center subspace
-        Xr_ns = Xr - np.matmul(V11, np.matmul(V11.T, Xr)) 
-        # Compute mean of the data in the center null space
-        Xr0_ns = np.mean(Xr_ns, axis=1) 
-        # Compute norm of the mean
-        Xr0_ns_norm = np.linalg.norm(Xr0_ns)
-        X_norms.append(Xr0_ns_norm)
-        # Center normalize the data
-        Xrr_ns = (Xr_ns - Xr0_ns.reshape(-1, 1))/Xr0_ns_norm
-        XtotInput.append(Xrr_ns)
 
-    a_Mfull_vec = np.zeros(num_manifolds)
-    R_M_vec = np.zeros(num_manifolds)
-    D_M_vec = np.zeros(num_manifolds)
-    # Make the D+1 dimensional data
-    for i in range(num_manifolds):
-        S_r = XtotInput[i]
-        D, m = S_r.shape
-        # Project the data onto a smaller subspace
-        if D > m:
-            Q, R = qr(S_r, mode='economic')
-            S_r = np.matmul(Q.T, S_r)
-            # Get the new sizes
-            D, m = S_r.shape
-        # Add the center dimension
-        sD1 = np.concatenate([S_r, np.ones((1, m))], axis=0)
+    start_time = time()
+    with Pool(N_PROCESSES) as p:
+        XtotInput = p.map(partial(calc_XtotInput, V11=V11), Xtot0)
+        ARD = np.array(p.map(partial(calc_ARD, kappa=kappa, n_t=n_t), XtotInput))
+    print(f'-- parallel XtotInput, a, R, D took {time() - start_time:.3f} s')
 
-        # Carry out the analysis on the i_th manifold
-        if t_vecs is not None:
-            a_Mfull, R_M, D_M = each_manifold_analysis_D1(sD1, kappa, n_t, t_vec=t_vecs[i])
-        else:
-            a_Mfull, R_M, D_M = each_manifold_analysis_D1(sD1, kappa, n_t)
+    a_Mfull_vec = ARD[:,0]
+    R_M_vec = ARD[:,1]
+    D_M_vec = ARD[:,2]
 
-        # Store the results
-        a_Mfull_vec[i] = a_Mfull
-        R_M_vec[i] = R_M
-        D_M_vec[i] = D_M
     return a_Mfull_vec, R_M_vec, D_M_vec, res_coeff0, KK
 
+def calc_XtotInput(Xr, V11):
+    # Project manifold data into null space of center subspace
+    Xr_ns = Xr - np.matmul(V11, np.matmul(V11.T, Xr)) 
+    # Compute mean of the data in the center null space
+    Xr0_ns = np.mean(Xr_ns, axis=1) 
+    # Compute norm of the mean
+    Xr0_ns_norm = np.linalg.norm(Xr0_ns)
+    # Center normalize the data
+    Xrr_ns = (Xr_ns - Xr0_ns.reshape(-1, 1))/Xr0_ns_norm
+    return Xrr_ns
+    
+def calc_ARD(S_r, kappa, n_t):
+    D, m = S_r.shape
+    # Project the data onto a smaller subspace
+    if D > m:
+        Q, _ = qr(S_r, mode='economic')
+        S_r = np.matmul(Q.T, S_r)
+        # Get the new sizes
+        D, m = S_r.shape
+    # Add the center dimension
+    sD1 = np.concatenate([S_r, np.ones((1, m))], axis=0)
+
+    # Carry out the analysis on the i_th manifold
+    a_Mfull, R_M, D_M = each_manifold_analysis_D1(sD1, kappa, n_t)
+    
+    return a_Mfull, R_M, D_M
 
 def each_manifold_analysis_D1(sD1, kappa, n_t, eps=1e-8, t_vec=None):
     '''
@@ -129,7 +132,7 @@ def each_manifold_analysis_D1(sD1, kappa, n_t, eps=1e-8, t_vec=None):
         D_M: Calculated dimension (scalar)
     '''
     # Get the dimensionality and number of manifold points
-    D1, m = sD1.shape # D+1 dimensional data
+    D1 = sD1.shape[0] # D+1 dimensional data
     D = D1-1
     # Sample n_t vectors from a D+1 dimensional standard normal distribution unless a set is given
     if t_vec is None:
@@ -207,8 +210,6 @@ def maxproj(t_vec, sD1, sc=1):
     # get the dimension and number of the t vectors
     D1, n_t = t_vec.shape
     D = D1 - 1
-    # Get the number of samples for the manifold to be processed
-    m = sD1.shape[1]
     # For each of the t vectors, find the maximum projection onto manifold points
     # Ignore the last of the D+1 dimensions (center dimension)
     s0 = np.zeros((D1, n_t))
@@ -297,22 +298,20 @@ def fun_FA(centers, maxK, max_iter, n_repeats, s_all=None, verbose=False, conjug
         res_coeff: Cost function after optimization for each K
         res_coeff0: Correlation before optimization
     '''
-    N, P = centers.shape
+    P = centers.shape[1]
     # Configure the solver
     opts =  {
-                'max_iter': max_iter,
-                'gtol': 1e-6,
-                'xtol': 1e-6,
-                'ftol': 1e-8
+                'max_iterations': max_iter,
+                'min_gradient_norm': 1e-6,
+                'min_step_size': 1e-6,
             }
 
     # Subtract the global mean
     mean = np.mean(centers.T, axis=0, keepdims=True)
     Xb = centers.T - mean
-    xbnorm = np.sqrt(np.square(Xb).sum(axis=1, keepdims=True))
 
     # Gram-Schmidt into a P-1 dimensional basis
-    q, r = qr(Xb.T, mode='economic')
+    q, _ = qr(Xb.T, mode='economic')
     X = np.matmul(Xb, q[:, 0:P-1])
 
     # Sore the (P, P-1) dimensional data before extracting the low rank structure
@@ -326,8 +325,6 @@ def fun_FA(centers, maxK, max_iter, n_repeats, s_all=None, verbose=False, conjug
     # Storage for the results
     V1_mat = []
     C0_mat = []
-    norm_coeff = []
-    norm_coeff_vec = []
     res_coeff = []
 
     # Compute the optimal low rank structure for rank 1 to maxK
@@ -335,43 +332,13 @@ def fun_FA(centers, maxK, max_iter, n_repeats, s_all=None, verbose=False, conjug
     for i in range(1, maxK + 1):
         best_stability = 0
 
-        for j in range(1, n_repeats + 1):
-            # Sample a random normal vector unless one is supplied
-            if s_all is not None and len(s_all) >= i:
-                s = s_all[i*j - 1]
-            else:
-                s = np.random.randn(P, 1)
+        with Pool(N_PROCESSES) as p:
+            V1s = p.map(partial(_fun_FA, X=X, P=P, V1=V1, opts=opts), range(1, n_repeats + 1))
 
-            # Create initial V. 
-            sX = np.matmul(s.T, X)
-            if V1 is None:
-                V0 = sX
-            else:
-                V0 = np.concatenate([sX, V1.T], axis=0)
-            V0, _ = qr(V0.T, mode='economic') # (P-1, i)
-
-            # Compute the optimal V for this i
-            V1tmp, output = CGmanopt(V0, partial(square_corrcoeff_full_cost, grad=False), X, **opts)
-
-            # Compute the cost
-            cost_after, _ = square_corrcoeff_full_cost(V1tmp, X, grad=False)
-
-            # Verify that the solution is orthogonal within tolerance
-            assert np.linalg.norm(np.matmul(V1tmp.T, V1tmp) - np.identity(i), ord='fro') < 1e-10
-
-            # Extract low rank structure
-            X0 = X - np.matmul(np.matmul(X, V1tmp), V1tmp.T)
-
-            # Compute stability of solution
-            denom = np.sqrt(np.sum(np.square(X), axis=1))
-            stability = min(np.sqrt(np.sum(np.square(X0), axis=1))/denom)
-
-            # Store the solution if it has the best stability
+        for V1tmp, stability in V1s:
             if stability > best_stability:
                 best_stability = stability
                 best_V1 = V1tmp
-            if n_repeats > 1 and verbose:
-                print(j, 'cost=', cost_after, 'stability=', stability)
 
         # Use the best solution
         V1 = best_V1
@@ -390,8 +357,6 @@ def fun_FA(centers, maxK, max_iter, n_repeats, s_all=None, verbose=False, conjug
         # Store the results
         V1_mat.append(V1)
         C0_mat.append(C0)
-        norm_coeff.append((xnorm/xbnorm)[:, 0])
-        norm_coeff_vec.append(np.mean(xnorm/xbnorm))
         res_coeff.append(current_cost)
  
         # Break the loop if there's been no reduction in cost for 3 consecutive iterations
@@ -404,7 +369,33 @@ def fun_FA(centers, maxK, max_iter, n_repeats, s_all=None, verbose=False, conjug
             if verbose:
                 print("Optimal K0 found")
             break
-    return norm_coeff, norm_coeff_vec, q[:, 0:P-1], V1_mat, res_coeff, res_coeff0
+    return q[:, 0:P-1], V1_mat, res_coeff, res_coeff0
+
+def _fun_FA(j, X, P, V1, opts):
+    s = np.random.randn(P, 1)
+
+    # Create initial V. 
+    sX = np.matmul(s.T, X)
+    if V1 is None:
+        V0 = sX
+    else:
+        V0 = np.concatenate([sX, V1.T], axis=0)
+    V0, _ = qr(V0.T, mode='economic') # (P-1, i)
+
+    # Compute the optimal V for this i
+    V1tmp, _ = CGmanopt(V0, partial(square_corrcoeff_full_cost, grad=False), X, **opts)
+
+    # Verify that the solution is orthogonal within tolerance
+    # assert np.linalg.norm(np.matmul(V1tmp.T, V1tmp) - np.identity(i), ord='fro') < 1e-10
+
+    # Extract low rank structure
+    X0 = X - np.matmul(np.matmul(X, V1tmp), V1tmp.T)
+
+    # Compute stability of solution
+    denom = np.sqrt(np.sum(np.square(X), axis=1))
+    stability = min(np.sqrt(np.sum(np.square(X0), axis=1))/denom)
+    
+    return V1tmp, stability
 
 def CGmanopt(X, objective_function, A, **kwargs):
     '''
@@ -424,12 +415,13 @@ def CGmanopt(X, objective_function, A, **kwargs):
     '''
 
     manifold = Stiefel(X.shape[0], X.shape[1])
+    @pymanopt.function.autograd(manifold)
     def cost(X):
         c, _ = objective_function(X, A)
         return c
-    problem = Problem(manifold=manifold, cost=cost, verbosity=0)
-    solver = ConjugateGradient(logverbosity=0)
-    Xopt = solver.solve(problem)
+    problem = Problem(manifold=manifold, cost=cost)
+    solver = ConjugateGradient(verbosity=0, **kwargs)
+    Xopt = solver.run(problem).point
     return Xopt, None
 
 
@@ -486,7 +478,7 @@ def MGramSchmidt(V):
     Returns:
         V_out: 2D array of shape (n, k) containing k orthogonal vectors of dimension n
     '''
-    n, k  = V.shape
+    k  = V.shape[1]
     V_out = np.copy(V)
     for i in range(k):
         for j in range(i):

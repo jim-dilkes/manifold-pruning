@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(description='Plotting MFTMA analysis results (c
                                              'capacity, manifold radius, manifold dimension '
                                              'and center correlation) over layers')
 parser.add_argument('--num_layers', type=int, default=12, help='Number of hidden layers.')
-parser.add_argument('--mftma_analysis_dir', type=str, default='mftma-analysis',
+parser.add_argument('--mftma_analysis_dir', type=str, default='results/mftma-analysis',
                     help='Location to output MFTMA analysis directory.')
 
 args = parser.parse_args()

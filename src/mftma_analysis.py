@@ -1,16 +1,18 @@
-import pickle as pkl
 import os
+from time import time
 import argparse
+import pickle as pkl
+
 from mftma.manifold_analysis_correlation import manifold_analysis_corr
 
 parser = argparse.ArgumentParser(description='MFTMA analysis over layers.')
 
 # Input
-parser.add_argument('--feature_dir', type=str, default='features',
+parser.add_argument('--feature_dir', type=str, default='data/features',
                     help='Input feature data directory.')
 
 #Output
-parser.add_argument('--mftma_analysis_dir', type=str, default='mftma-analysis',
+parser.add_argument('--mftma_analysis_dir', type=str, default='results/mftma-analysis',
                     help='Location to output MFTMA analysis directory.')
 
 parser.add_argument('--num_layers', type=int, default=12, help='Number of hidden layers.')
@@ -27,12 +29,14 @@ args = parser.parse_args()
 print(args)
 
 for layer in range(1,args.num_layers+1):
-    print(f'MFTMA analysis, layer {str(layer)}')
+    start_time = time()
+    print(f'============ layer {layer} ============')
     class_encodings = pkl.load(
         open(os.path.join(args.feature_dir, f'{str(layer)}.pkl'), 'rb+')
     )
 
     a, r, d, r0, K = manifold_analysis_corr(class_encodings, args.kappa, args.n_t, n_reps=args.n_reps)
+    print(f'Finished layer {layer} in {time() - start_time:.3f} s')
 
     mftma_analysis_data = {'a': a, 'r': r, 'd': d, 'r0': r0, 'K': K}
     pkl.dump(
