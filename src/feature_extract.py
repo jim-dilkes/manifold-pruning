@@ -9,6 +9,7 @@ from transformers import AutoTokenizer, AutoConfig, AutoModelForQuestionAnswerin
 from pruning.masked.utils.arch import apply_neuron_mask
 
 parser = argparse.ArgumentParser(description='Extract linguistic features from Transformer.')
+parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
 # Input
 parser.add_argument('--dataset_file', type=str, default="dataset/ptb_pos.txt",
@@ -35,7 +36,8 @@ parser.add_argument('--feature_dir', type=str, default='features',
                     help='Output feature data directory.')
 
 # Parameters
-parser.add_argument('--pretrained_model_name', type=str, default='bert-base-cased',
+parser.add_argument('--pretrained_model_name', type=str, 
+                    default=os.path.join(parent_dir, 'models/bert-base-uncased-squad2'),
                     choices=['bert-base-cased', 'openai-gpt', 'distilbert-base-uncased',
                              'roberta-base', 'albert-base-v1'], help='Pretrained model name.')
 parser.add_argument('--mask', action='store_true', default=False,
@@ -48,7 +50,6 @@ args = parser.parse_args()
 print(args)
 
 print('Extracting Features')
-parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 dataset_file = os.path.join(parent_dir, args.dataset_file)
 tag_file = os.path.join(parent_dir, args.tag_file)
 sample = os.path.join(parent_dir, args.sample)
