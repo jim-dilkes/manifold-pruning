@@ -10,7 +10,6 @@ from pruning.masked.utils.arch import apply_neuron_mask
 
 parser = argparse.ArgumentParser(description='Extract linguistic features from Transformer.')
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-
 # Input
 parser.add_argument('--dataset_file', type=str, default="dataset/ptb_pos.txt",
                     help='Input pickle file with the relevant dataset. Each line contains the ambiguous word '
@@ -26,11 +25,13 @@ parser.add_argument('--sample', type=str,
                          'word index and tag of the randomly sampled dataset (output from '
                          'prepare_data.py.')
 parser.add_argument('--pruning_metric', type=str, default=None,
-                    choices=['random', 'mac', 'latency', None],
+                    choices=['random', 'mac', 'latency'],
                     help='Input a supported pruning metric')
 parser.add_argument('--pruned_percentage', type=int,
                     default=0,
                     help='Percentage of the model that has been pruned.')
+parser.add_argument('--masks_dir', type=str, default=None,
+                    help='Directory with model masks.')
 # Output
 parser.add_argument('--feature_dir', type=str, default='features',
                     help='Output feature data directory.')
@@ -50,14 +51,6 @@ args = parser.parse_args()
 print(args)
 
 print('Extracting Features')
-dataset_file = os.path.join(parent_dir, args.dataset_file)
-tag_file = os.path.join(parent_dir, args.tag_file)
-sample = os.path.join(parent_dir, args.sample)
-
-if args.pruning_metric:
-    feature_dir = os.path.join(parent_dir, args.feature_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
-else:
-    feature_dir = os.path.join(parent_dir, args.feature_dir, "0Pruned")
 
 tokenizer = AutoTokenizer.from_pretrained(args.pretrained_model_name)
 config = AutoConfig.from_pretrained(args.pretrained_model_name, output_hidden_states=True)
@@ -67,7 +60,7 @@ else:
     model = AutoModelForQuestionAnswering.from_pretrained(args.pretrained_model_name, config=config)
 
 manifold_vectors = defaultdict(dict)
-with open(tag_file) as f:
+with open(args.tag_file) as f:
     for tag in f:
         tag = tag.strip().lower()
         for layer in range(1,config.num_hidden_layers+1):
@@ -79,18 +72,15 @@ model.eval()
 
 # load masks
 if args.pruning_metric:
-    masks_base_dir = os.path.join(parent_dir, "models/masks/bert-base-uncased-squad2/squad_v2")
-    mask_dir = os.path.join(masks_base_dir, args.pruning_metric, f"{round((100 - args.pruned_percentage) / 100, 1)}", "seed_0")
-
-    head_mask = torch.load(os.path.join(mask_dir, "head_mask.pt"),
+    head_mask = torch.load(os.path.join(args.masks_dir, "head_mask.pt"),
                             map_location=device)
-    neuron_mask = torch.load(os.path.join(mask_dir, "neuron_mask.pt"),
+    neuron_mask = torch.load(os.path.join(args.masks_dir, "neuron_mask.pt"),
                                 map_location=device)
     handles = apply_neuron_mask(model, neuron_mask)
 
-line_word_tag_map = pkl.load(open(sample, 'rb+'))
+line_word_tag_map = pkl.load(open(args.sample, 'rb+'))
 
-dfile = pkl.load(open(dataset_file, "rb"))
+dfile = pkl.load(open(args.dataset_file, "rb"))
 for line_idx,line in enumerate(dfile):
     if line_idx in line_word_tag_map:
         #skips empty strings for words and tags. line[2] is where sentences are stored.
@@ -130,7 +120,7 @@ for line_idx,line in enumerate(dfile):
                     manifold_vectors[layer][tag] = np.hstack((manifold_vectors[layer][tag],
                                                                 token_vector))
 
-os.makedirs(feature_dir, exist_ok=True)
+os.makedirs(args.feature_dir, exist_ok=True)
 for layer in range(1,config.num_hidden_layers+1):
-    pkl.dump(list(manifold_vectors[layer].values()), open(os.path.join(feature_dir,
+    pkl.dump(list(manifold_vectors[layer].values()), open(os.path.join(args.feature_dir,
                                                                   str(layer)+'.pkl'), 'wb+'))
