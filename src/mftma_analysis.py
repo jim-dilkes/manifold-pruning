@@ -52,10 +52,10 @@ for layer in range(1,args.num_layers+1):
 
     mftma_analysis_data = {'a': a, 'r': r, 'd': d, 'r0': r0, 'K': K}
  
-if args.pruning_metric:
-    mftma_analysis_dir = os.path.join(parent_dir, args.mftma_analysis_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
-else:
-    mftma_analysis_dir = os.path.join(parent_dir, args.mftma_analysis_dir, "0Pruned")
+    if args.pruning_metric:
+        mftma_analysis_dir = os.path.join(parent_dir, args.mftma_analysis_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
+    else:
+        mftma_analysis_dir = os.path.join(parent_dir, args.mftma_analysis_dir, "0Pruned")
     
     os.makedirs(mftma_analysis_dir, exist_ok=True)
     pkl.dump(
