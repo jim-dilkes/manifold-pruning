@@ -1,8 +1,0 @@
-02/17/2023 03:25:26 - INFO - __main__ - Namespace(model_name='bert-base-uncased', task_name='squad', ckpt_dir='./bert-base-uncased', output_dir='outputs/bert-base-uncased/squad/mac/0.5/seed_0', gpu=0, metric='mac', constraint=0.5, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
-02/17/2023 03:25:26 - INFO - __main__ - Seed number: 0
-02/17/2023 03:25:38 - INFO - datasets_modules.datasets.squad.d6ec3ceb99ca480ce37cdd35555d6cb2511d223b9150cce08a837ef62ffea453.squad - generating examples from = /home/rafael/.cache/huggingface/datasets/downloads/b8bb19735e1bb591510a01cc032f4c9f969bc0eeb081ae1b328cd306f3b24008
-02/17/2023 03:25:41 - INFO - datasets_modules.datasets.squad.d6ec3ceb99ca480ce37cdd35555d6cb2511d223b9150cce08a837ef62ffea453.squad - generating examples from = /home/rafael/.cache/huggingface/datasets/downloads/9d5462987ef5f814fe15a369c1724f6ec39a2018b3b6271a9d7d2598686ca2ff
-02/17/2023 03:26:12 - INFO - __main__ - Pruned Model MAC: 50.00 %
-02/17/2023 03:27:40 - INFO - __main__ - squad Pruning time (s): 109.82888340950012
-02/17/2023 03:27:43 - WARNING - datasets.builder - Found cached dataset squad (/home/rafael/.cache/huggingface/datasets/squad/plain_text/1.0.0/d6ec3ceb99ca480ce37cdd35555d6cb2511d223b9150cce08a837ef62ffea453)
-02/17/2023 03:28:46 - INFO - __main__ - squad Test accuracy: 7.2443
