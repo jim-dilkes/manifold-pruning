@@ -1,0 +1,35 @@
+03/25/2023 13:30:17 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='bert-base-uncased-squad2', output_dir='outputs/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
+03/25/2023 13:30:17 - INFO - __main__ - Seed number: 0
+03/25/2023 13:30:20 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/25/2023 13:30:20 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
+03/25/2023 13:30:20 - INFO - __main__ - Collecting mask gradients...
+03/25/2023 13:30:42 - INFO - __main__ - Teacher constraint: 0.31622776601683794
+03/25/2023 16:31:52 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='bert-base-uncased-squad2', output_dir='outputs/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
+03/25/2023 16:31:52 - INFO - __main__ - Seed number: 0
+03/25/2023 16:31:55 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/25/2023 16:31:55 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
+03/25/2023 16:31:55 - INFO - __main__ - Collecting mask gradients...
+03/25/2023 16:32:16 - INFO - __main__ - Teacher constraint: 0.31622776601683794
+03/25/2023 17:05:56 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='bert-base-uncased-squad2', output_dir='outputs/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, mha_lut='outputs/mha_lut.pt', ffn_lut='outputs/ffn_lut.py', num_samples=2048, seed=0)
+03/25/2023 17:05:56 - INFO - __main__ - Seed number: 0
+03/25/2023 17:05:59 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/25/2023 17:05:59 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
+03/25/2023 17:05:59 - INFO - __main__ - Collecting mask gradients...
+03/25/2023 17:06:20 - INFO - __main__ - Teacher constraint: 0.31622776601683794
+03/25/2023 17:07:58 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='bert-base-uncased-squad2', output_dir='outputs/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, mha_lut='outputs/mha_lut.pt', ffn_lut='outputs/ffn_lut.pt', num_samples=2048, seed=0)
+03/25/2023 17:07:58 - INFO - __main__ - Seed number: 0
+03/25/2023 17:08:01 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/25/2023 17:08:01 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
+03/25/2023 17:08:01 - INFO - __main__ - Collecting mask gradients...
+03/25/2023 17:08:22 - INFO - __main__ - Teacher constraint: 0.31622776601683794
+03/25/2023 17:13:03 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='bert-base-uncased-squad2', output_dir='outputs/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, rnd_constraint_heads=None, rnd_constraint_neurons=None, mha_lut='outputs/mha_lut.pt', ffn_lut='outputs/ffn_lut.pt', num_samples=2048, seed=0)
+03/25/2023 17:13:03 - INFO - __main__ - Seed number: 0
+03/25/2023 17:13:11 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/25/2023 17:13:11 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
+03/25/2023 17:13:11 - INFO - __main__ - Collecting mask gradients...
+03/25/2023 17:13:33 - INFO - __main__ - Teacher constraint: 0.31622776601683794
+03/27/2023 17:20:12 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='bert-base-uncased-squad2', output_dir='outputs/bert-base-uncased-squad2/squad_v2/latency/0.1/seed_0', gpu=0, metric='latency', constraint=0.1, rnd_constraint_heads=None, rnd_constraint_neurons=None, mha_lut='outputs/mha_lut.pt', ffn_lut='outputs/ffn_lut.pt', num_samples=2048, seed=0)
+03/27/2023 17:20:12 - INFO - __main__ - Seed number: 0
+03/27/2023 17:20:15 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/27/2023 17:20:15 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-dcbadd8723ffee27.arrow
+03/27/2023 17:20:15 - INFO - __main__ - Collecting mask gradients...

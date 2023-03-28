@@ -1,6 +1,0 @@
-02/17/2023 03:23:38 - INFO - __main__ - Namespace(model_name='bert-base-uncased', task_name='sst2', ckpt_dir='./bert-base-uncased', output_dir='outputs/bert-base-uncased/sst2/mac/0.5/seed_0', gpu=0, metric='mac', constraint=0.5, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
-02/17/2023 03:23:38 - INFO - __main__ - Seed number: 0
-02/17/2023 03:23:52 - INFO - __main__ - Pruned Model MAC: 50.00 %
-02/17/2023 03:24:06 - INFO - __main__ - sst2 Pruning time (s): 15.783699750900269
-02/17/2023 03:24:08 - WARNING - datasets.builder - Found cached dataset glue (/home/rafael/.cache/huggingface/datasets/glue/sst2/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
-02/17/2023 03:24:10 - INFO - __main__ - sst2 Test accuracy: 0.5092
