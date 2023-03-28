@@ -10,7 +10,6 @@ import autograd.numpy as np
 from scipy.linalg import qr
 from functools import partial
 from multiprocessing import Pool
-from numba import njit
 from time import time
 
 from cvxopt import solvers, matrix
