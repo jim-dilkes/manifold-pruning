@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser(description='MFTMA analysis over layers.')
 parser.add_argument('--feature_dir', type=str, default='data/features',
                     help='Input feature data directory.')
 parser.add_argument('--pruning_metric', type=str, default=None,
-                    choices=['random', 'mac', 'latency'],
-                    help='Input a suported pruning metric')
+                    choices=['random', 'mac', 'latency', None],
+                    help='Input a supported pruning metric')
 parser.add_argument('--pruned_percentage', type=int,
                     default=0,
                     help='Percentage of the model that has been pruned.')
@@ -35,8 +35,11 @@ args = parser.parse_args()
 print(args)
 
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-feature_dir = os.path.join(parent_dir, args.feature_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
-
+if args.pruning_metric:
+    feature_dir = os.path.join(parent_dir, args.feature_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
+else:
+    feature_dir = os.path.join(parent_dir, args.feature_dir, "0Pruned")
+    
 for layer in range(1,args.num_layers+1):
     start_time = time()
     print(f'============ layer {layer} ============')
@@ -49,7 +52,11 @@ for layer in range(1,args.num_layers+1):
 
     mftma_analysis_data = {'a': a, 'r': r, 'd': d, 'r0': r0, 'K': K}
  
+if args.pruning_metric:
     mftma_analysis_dir = os.path.join(parent_dir, args.mftma_analysis_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
+else:
+    mftma_analysis_dir = os.path.join(parent_dir, args.mftma_analysis_dir, "0Pruned")
+    
     os.makedirs(mftma_analysis_dir, exist_ok=True)
     pkl.dump(
         mftma_analysis_data,

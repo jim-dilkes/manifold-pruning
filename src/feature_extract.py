@@ -26,8 +26,8 @@ parser.add_argument('--sample', type=str,
                          'word index and tag of the randomly sampled dataset (output from '
                          'prepare_data.py.')
 parser.add_argument('--pruning_metric', type=str, default=None,
-                    choices=['random', 'mac', 'latency'],
-                    help='Input a suported pruning metric')
+                    choices=['random', 'mac', 'latency', None],
+                    help='Input a supported pruning metric')
 parser.add_argument('--pruned_percentage', type=int,
                     default=0,
                     help='Percentage of the model that has been pruned.')
@@ -53,7 +53,11 @@ print('Extracting Features')
 dataset_file = os.path.join(parent_dir, args.dataset_file)
 tag_file = os.path.join(parent_dir, args.tag_file)
 sample = os.path.join(parent_dir, args.sample)
-feature_dir = os.path.join(parent_dir, args.feature_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
+
+if args.pruning_metric:
+    feature_dir = os.path.join(parent_dir, args.feature_dir, args.pruning_metric, f"{args.pruned_percentage}Pruned")
+else:
+    feature_dir = os.path.join(parent_dir, args.feature_dir, "0Pruned")
 
 tokenizer = AutoTokenizer.from_pretrained(args.pretrained_model_name)
 config = AutoConfig.from_pretrained(args.pretrained_model_name, output_hidden_states=True)
@@ -74,14 +78,15 @@ model.to(device)
 model.eval()
 
 # load masks
-masks_base_dir = os.path.join(parent_dir, "models/masks/bert-base-uncased-squad2/squad_v2")
-mask_dir = os.path.join(masks_base_dir, args.pruning_metric, f"{round((100 - args.pruned_percentage) / 100, 1)}", "seed_0")
+if args.pruning_metric:
+    masks_base_dir = os.path.join(parent_dir, "models/masks/bert-base-uncased-squad2/squad_v2")
+    mask_dir = os.path.join(masks_base_dir, args.pruning_metric, f"{round((100 - args.pruned_percentage) / 100, 1)}", "seed_0")
 
-head_mask = torch.load(os.path.join(mask_dir, "head_mask.pt"),
-                        map_location=device)
-neuron_mask = torch.load(os.path.join(mask_dir, "neuron_mask.pt"),
+    head_mask = torch.load(os.path.join(mask_dir, "head_mask.pt"),
                             map_location=device)
-handles = apply_neuron_mask(model, neuron_mask)
+    neuron_mask = torch.load(os.path.join(mask_dir, "neuron_mask.pt"),
+                                map_location=device)
+    handles = apply_neuron_mask(model, neuron_mask)
 
 line_word_tag_map = pkl.load(open(sample, 'rb+'))
 
