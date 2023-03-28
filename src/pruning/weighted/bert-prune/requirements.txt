@@ -1,0 +1,25 @@
+# tensorflow==1.15.5 #>= 1.11.0   # CPU Version of TensorFlow.
+tensorflow-gpu==1.15.5 #>= 1.11.0  # GPU version of TensorFlow.
+# spacy==2.2.4
+# The large spacy model, which we use for sentence segmentation
+# https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.2.0/en_core_web_lg-2.2.0.tar.gz
+
+# From https://github.com/cybertronai/gradient-checkpointing
+# Because they didn't release a pip package :(
+toposort
+networkx
+pytest
+
+six
+
+# For generating tables
+parse
+matplotlib
+
+# For executing some scripts
+fire
+
+protobuf==3.20.*
+
+# pip install torch==1.5.1+cpu torchvision==0.6.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+# conda install cudatoolkit==10.0 cudnn==7.3.1
