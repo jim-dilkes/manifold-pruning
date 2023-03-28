@@ -1,8 +1,8 @@
 from tqdm import tqdm
 import torch
 
-from utils.linalg import lsmr_cupy_solver
-from utils.arch import (
+from pruning.masked.utils.linalg import lsmr_cupy_solver
+from pruning.masked.utils.arch import (
     get_layers,
     get_mha_proj,
     get_ffn2,

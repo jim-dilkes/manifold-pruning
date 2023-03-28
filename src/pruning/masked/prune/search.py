@@ -1,8 +1,8 @@
 import torch
 
-from prune.fisher import compute_fisher_info
-from efficiency.mac import compute_mac, mac_per_head, mac_per_neuron
-from efficiency.latency import estimate_latency, fit_latency_fn
+from pruning.masked.prune.fisher import compute_fisher_info
+from pruning.masked.efficiency.mac import compute_mac, mac_per_head, mac_per_neuron
+from pruning.masked.efficiency.latency import estimate_latency, fit_latency_fn
 
 
 @torch.no_grad()
@@ -182,25 +182,24 @@ def search_random(
     num_attention_heads = config.num_attention_heads
     intermediate_size = config.intermediate_size
 
-    def random_idx(percentage, size):
+    def random_idx(percentage, size, min_keep=1):
         if percentage < 0 or percentage > 1:
             raise ValueError("Percentage must be between 0 and 1")
 
         idx = torch.arange(size)
-        sample_size = int(size * percentage)
+        sample_size = max(min_keep, int(size * percentage))
         random_indices = torch.randperm(size)[:sample_size]
         random_sample = idx[random_indices]
         return random_sample
 
-    head_indicies = random_idx(heads_constraint, num_hidden_layers * num_attention_heads)
-    head_mask = torch.zeros(num_hidden_layers * num_attention_heads).cuda()
-    head_mask[head_indicies] = 1.0
-    head_mask = head_mask.view(num_hidden_layers, num_attention_heads)
-    
-    neuron_indicies = random_idx(neurons_constraint, num_hidden_layers * intermediate_size)
-    neuron_mask = torch.zeros(num_hidden_layers * intermediate_size).cuda()
-    neuron_mask[neuron_indicies] = 1.0
-    neuron_mask = neuron_mask.view(num_hidden_layers, intermediate_size)
+    head_mask = torch.zeros(num_hidden_layers, num_attention_heads).cuda()
+    for layer in range(num_hidden_layers):
+        head_indices = random_idx(heads_constraint, num_attention_heads)
+        head_mask[layer, head_indices] = 1.0
+
+    neuron_mask = torch.zeros(num_hidden_layers, intermediate_size).cuda()
+    for layer in range(num_hidden_layers):
+        neuron_indices = random_idx(neurons_constraint, intermediate_size)
+        neuron_mask[layer, neuron_indices] = 1.0
 
     return head_mask, neuron_mask
-

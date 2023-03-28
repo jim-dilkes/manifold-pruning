@@ -1,6 +1,6 @@
 import torch
 
-from utils.arch import apply_neuron_mask
+from pruning.masked.utils.arch import apply_neuron_mask
 
 
 def collect_mask_grads(model, head_mask, neuron_mask, dataloader):

@@ -1,8 +1,8 @@
 import torch
 from datasets import load_metric
 
-from utils.arch import apply_neuron_mask
-from dataset.glue import target_dev_metric
+from pruning.masked.utils.arch import apply_neuron_mask
+from pruning.masked.dataset.glue import target_dev_metric
 
 
 @torch.no_grad()
