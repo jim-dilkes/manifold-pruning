@@ -27,6 +27,46 @@ solvers.options['feastol'] = 1e-12
 
 N_PROCESSES = 2
 
+def manifold_analysis_corr_approx(class_encodings):
+    manifold_count = len(class_encodings)
+
+    RMs = np.ones(manifold_count)
+    DMs = np.ones(manifold_count)
+    s_evals = np.ones(manifold_count)
+
+    for i in range(manifold_count):
+        # Extract the data matrix for the current manifold
+        X = np.array(class_encodings[i]).T
+        print(X.shape)
+        if X.size <= 1:
+            continue
+        point_count = X.shape[0]
+
+        # Compute singular values
+        s = np.linalg.svd(X, compute_uv=False)
+
+        # Compute the covariance matrix
+        C = np.matmul(X.T, X) / point_count
+
+        # Calculate eigenvalues and eigenvectors of the covariance matrix
+        eigenvalues, _ = np.linalg.eigh(C)
+
+        # Compute the manifold radius RM and manifold dimensionality DM
+        RMs[i] = np.sqrt(np.sum(eigenvalues ** 2))
+        DMs[i] = (np.sum(eigenvalues) ** 2) / np.sum(eigenvalues ** 2)
+        s_evals[i] = np.sum(s)
+
+    # Calculate the sum of singular values (s_i) for each manifold
+    s_sum = np.sum(s_evals)
+
+    # Replace h() as necessary
+    def phi(x):
+        return -x
+
+    alphaC = phi(s_sum)
+
+    return RMs, DMs, alphaC
+
 def manifold_analysis_corr(XtotT, kappa, n_t, t_vecs=None, n_reps=10):
     '''
     Carry out the analysis on multiple manifolds.
@@ -56,7 +96,9 @@ def manifold_analysis_corr(XtotT, kappa, n_t, t_vecs=None, n_reps=10):
     # Subtract the mean from each manifold
     Xtot0 = [XtotT[i] - X_origin for i in range(num_manifolds)]
     # Compute the mean for each manifold
-    centers = np.mean(XtotT, axis=2).T # Centers is of shape (N, m) for m manifolds
+    # centers = np.mean(XtotT, axis=2).T # Centers is of shape (N, m) for m manifolds
+    centers = [np.mean(XtotT[i], axis=1) for i in range(num_manifolds)]
+    centers = np.stack(centers, axis=1) # Centers is of shape (N, m) for m manifolds
     center_mean = np.mean(centers, axis=1, keepdims=True) # (N, 1) mean of all centers
 
     # Center correlation analysis

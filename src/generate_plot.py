@@ -26,10 +26,10 @@ for layer in range(1,args.num_layers+1):
     d = np.mean(temp_data['d'])
     r0 = temp_data['r0']
     if layer == 1:
-        norm_a = a
-        norm_r = r
-        norm_d = d
-        norm_r0 = r0
+        norm_a = np.abs(a)
+        norm_r = np.abs(r)
+        norm_d = np.abs(d)
+        norm_r0 = np.abs(r0)
 
     a /= norm_a
     r /= norm_r

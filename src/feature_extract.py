@@ -11,16 +11,16 @@ from pruning.masked.utils.arch import apply_neuron_mask
 parser = argparse.ArgumentParser(description='Extract linguistic features from Transformer.')
 parent_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 # Input
-parser.add_argument('--dataset_file', type=str, default="dataset/ptb_pos.txt",
+parser.add_argument('--dataset_file', type=str, default="data/experiments/FINAL_Q.pkl",
                     help='Input pickle file with the relevant dataset. Each line contains the ambiguous word '
                     'tag and question with form ||word_1, tag_1|,...,|word_k, tag_k|| '
                     'and a boolean value for whether the question is adversarial or '
                     'not.')
 parser.add_argument('--tag_file', type=str,
-                    default="dataset/relevant_pos_tags.txt",
+                    default="data/experiments/relevant_pos_tags_1.txt",
                     help='Input file with all POS tags used for Manifold Analysis.')
 parser.add_argument('--sample', type=str,
-                    default="dataset/sample_seed_0.pkl",
+                    default="data/experiments/sample_seed_1.pkl",
                     help='Input file containing the line index, '
                          'word index and tag of the randomly sampled dataset (output from '
                          'prepare_data.py.')
@@ -33,12 +33,12 @@ parser.add_argument('--pruned_percentage', type=int,
 parser.add_argument('--masks_dir', type=str, default=None,
                     help='Directory with model masks.')
 # Output
-parser.add_argument('--feature_dir', type=str, default='features',
+parser.add_argument('--feature_dir', type=str, default='data/features',
                     help='Output feature data directory.')
 
 # Parameters
 parser.add_argument('--pretrained_model_name', type=str, 
-                    default=os.path.join(parent_dir, 'models/bert-base-uncased-squad2'),
+                    default=os.path.join(os.getcwd(), 'models/bert-base-uncased-squad2'),
                     choices=['bert-base-cased', 'openai-gpt', 'distilbert-base-uncased',
                              'roberta-base', 'albert-base-v1'], help='Pretrained model name.')
 parser.add_argument('--mask', action='store_true', default=False,

@@ -9,27 +9,27 @@ parser = argparse.ArgumentParser(description='Prepare data for MFTMA analysis by
                                              'max_manifold_size number of samples.')
 
 # Input
-parser.add_argument('--dataset_file', type=str, default="dataset/train_questions_final.pkl",
+parser.add_argument('--dataset_file', type=str, default="data/experiments/FINAL_Q.pkl",
                     help='Input pickle file with the relevant dataset. Each line contains the ambiguous word '
                     'tag and question with form ||word_1, tag_1|,...,|word_k, tag_k|| '
                     'and a boolean value for whether the question is adversarial or '
                     'not. ')
 parser.add_argument('--tag_file', type=str,
-                    default="dataset/all_pos.txt",
+                    default="data/experiments/all_pos.txt",
                     help='Input file with all possible base POS tags. ')
 
 # Output
-parser.add_argument('--sample', type=str, default="dataset/sample_seed_0.pkl",
+parser.add_argument('--sample', type=str, default="data/experiments/sample_seed_1.pkl",
                     help='Output file containing the  line index, '
                          'word index and tag of the randomly sampled dataset.')
 parser.add_argument('--relevant_tags', type=str,
-                    default="dataset/relevant_pos_tags.txt",
+                    default="data/experiments/relevant_pos_tags_1.txt",
                     help='Output file to store relevant POS tags. ')
 
 # Parameters
 parser.add_argument('--max_manifold_size', type=int, default=50,
                     help='The maximal number of words per manifold.')
-parser.add_argument('--min_manifold_size', type=int, default=1,
+parser.add_argument('--min_manifold_size', type=int, default=5,
                     help='The minimal number of words per manifold.')
 parser.add_argument('--seed', type=int, default=0,
                     help='Randomization seed.')
@@ -57,12 +57,13 @@ for line in data:
         if len(tmp) == 2: 
             data_tags.append(tmp[-1].lower())
 
-with open(args.tag_file, "r", newline='\n') as f:
-    pos_tags = [tag.split('\n')[0].lower() for tag in f.readlines()]
+with open(args.tag_file, "r", newline='\r\n') as f:
+    pos_tags = [tag.split('\r\n')[0].lower() for tag in f.readlines()]
     pos_tags.extend(amb_tags)
 pos_tags = set(pos_tags)   
 data_tags = set(data_tags)
-
+print(pos_tags)
+print(data_tags)
 relevant_tags = pos_tags & data_tags
 with open(args.relevant_tags, 'w+') as f:
     s = '\n'.join(relevant_tags)
