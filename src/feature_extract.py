@@ -38,7 +38,7 @@ parser.add_argument('--feature_dir', type=str, default='data/features',
 
 # Parameters
 parser.add_argument('--pretrained_model_name', type=str, 
-                    default=os.path.join(os.getcwd(), 'models/bert-base-uncased-squad2'),
+                    default=os.path.join(parent_dir, 'models/bert-base-uncased-squad2'),
                     choices=['bert-base-cased', 'openai-gpt', 'distilbert-base-uncased',
                              'roberta-base', 'albert-base-v1'], help='Pretrained model name.')
 parser.add_argument('--mask', action='store_true', default=False,

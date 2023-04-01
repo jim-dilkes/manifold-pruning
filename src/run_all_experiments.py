@@ -44,7 +44,7 @@ for id in experiment_ids:
         else:
             feature_dir = os.path.join(parent_dir, FEATURES_BASE, f'train_{id}', args.pruning_metric, f'{perc}Pruned')
             # example: data/features/train_1/random/10Pruned
-            mftma_analysis_dir = os.path.join(parent_dir, RESULTS_BASE, f'train_{id}', args.pruning_metric, f'{perc}Pruned')
+            mftma_analysis_dir = os.path.join(parent_dir, RESULTS_BASE, f"{args.pruning_metric}Results", f'FinalTrain_{id}', f'{perc}Pruned')
             # example: results/train_1/random/10Pruned
             masks_dir = os.path.join(parent_dir, MASKS_BASE, args.pruning_metric, f'{round((100 - perc) / 100, 1)}/seed_0')
             # example: models/masks/bert-base-uncased-squad2/squad_v2/random/0.1/seed_0
