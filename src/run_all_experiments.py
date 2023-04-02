@@ -13,6 +13,7 @@ parser.add_argument('--pruning_metric', type=str, default=None,
                     choices=['random', 'mac', 'latency'],
                     help='Input a supported pruning metric')
 args = parser.parse_args()
+print(args)
 
 # define which experiments to run
 pruned_percentages = range(0, 100, 10)
