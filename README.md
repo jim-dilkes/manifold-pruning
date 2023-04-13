@@ -1,4 +1,10 @@
-# Pruning-Induced Effects on MFT Manifold Statistics in LLMs
+
+# References
+Our work is built on top of:<br>
+Manifold statistics - https://github.com/schung039/contextual-repr-manifolds<br>
+Pruning - https://github.com/WoosukKwon/retraining-free-pruning<br>
+
+# From contextual-repr-manifolds:
 
 ## Installation
 
@@ -140,7 +146,3 @@ optional arguments:
   --mftma_analysis_dir MFTMA_ANALYSIS_DIR
                         Location to output MFTMA analysis directory.
 ```
-
-
-# References
-Based on https://github.com/schung039/contextual-repr-manifolds
