@@ -1,9 +1,3 @@
-"""
-Creates a dictionary of POS_TAG: List(words) wherein if a word has that POS tag it
-is added to that key. This is to perform our ambiguous word check
-"""
-
-
 import json
 modules = ["Train", "Validation", "Test"]
 

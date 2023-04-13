@@ -1,0 +1,5 @@
+How many years after Mockingbird was Watchman set ?	WRB JJ NNS IN NNP VBD NNP set^VBN .
+When did Russian language spread to the peasants ?	WRB VBD JJ NN spread^VBD IN DT NNS .
+How many hours a day does the The Staten Island Ferry run ?	WRB JJ NNS DT NN VBZ DT DT NNP NNP NNP run^NN .
+Where did carpet weaving initially spread to inside of the Empire ?	WRB VBD NN NN RB spread^VBD IN RB IN DT NNP .
+How is a board only organization run ?	WRB VBZ DT NN JJ NN run^VBN .
