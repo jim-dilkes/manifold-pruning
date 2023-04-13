@@ -1,0 +1,12 @@
+03/28/2023 19:02:01 - INFO - __main__ - Namespace(model_name='bert-base-uncased-squad2', task_name='squad_v2', ckpt_dir='models/bert-base-uncased-squad2', output_dir='models/masks/bert-base-uncased-squad2/squad_v2/random/0.6_0.6/seed_0', gpu=0, metric='random', constraint=0.5, constraint_heads=0.6, constraint_neurons=0.6, mha_lut=None, ffn_lut=None, num_samples=2048, seed=0)
+03/28/2023 19:02:01 - INFO - __main__ - Seed number: 0
+03/28/2023 19:02:03 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/28/2023 19:02:03 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-e1ec954d61e9439d.arrow
+03/28/2023 19:02:03 - INFO - __main__ - Collecting mask gradients...
+03/28/2023 19:02:25 - INFO - __main__ - Pruned heads randomly to: 60.00 %
+03/28/2023 19:02:25 - INFO - __main__ - Pruned neurons randomly to: 60.00 %
+03/28/2023 19:02:27 - INFO - __main__ - Rescaling mask...
+03/28/2023 19:03:58 - INFO - __main__ - squad_v2 Pruning time (s): 114.4385998249054
+03/28/2023 19:04:00 - WARNING - datasets.builder - Found cached dataset squad_v2 (/home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d)
+03/28/2023 19:04:00 - WARNING - datasets.arrow_dataset - Loading cached processed dataset at /home/rafael/.cache/huggingface/datasets/squad_v2/squad_v2/2.0.0/09187c73c1b837c95d9a249cd97c2c3f1cebada06efe667b4427714b27639b1d/cache-870733901936e55a.arrow
+03/28/2023 19:05:04 - INFO - __main__ - squad_v2 Test accuracy: 60.4812
